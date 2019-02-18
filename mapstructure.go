@@ -112,6 +112,8 @@ type Metadata struct {
 	// Unused is a slice of keys that were found in the raw value but
 	// weren't decoded since there was no matching field in the result interface
 	Unused []string
+
+	Fields []string
 }
 
 // Decode takes an input structure and uses reflection to translate it to
@@ -1100,6 +1102,8 @@ func (d *Decoder) decodeStructFromMap(name string, dataVal, val reflect.Value) e
 
 		if err := d.decode(fieldName, rawMapVal.Interface(), fieldValue); err != nil {
 			errors = appendErrors(errors, err)
+		} else if d.config.Metadata != nil {
+			d.config.Metadata.Fields = append(d.config.Metadata.Fields, f.field.Name)
 		}
 	}
 
